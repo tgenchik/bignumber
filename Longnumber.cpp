@@ -1,304 +1,337 @@
-#include <iostream>
-#include <vector>
-#include <numeric>
+#include "LongNumber.hpp"
 #include <algorithm>
+#include <cmath>
+#include <iostream>
 
-class bignumber{
-public:
-    int max(int a, int b) const {
+LongNumber::LongNumber() : precision(0), isNegative(false) {}
+int max(int a, int b) {
         return a > b ? a : b;
     }
-    int min(int a, int b) const {
+int min(int a, int b) {
         return a < b ? a : b;
-    }               
-    int sign = 1;
-    std::vector <int> digits;
-    std::vector <int> accuracy;
+}    
 
-    bignumber(std::string str) {
-        int i = 0;
-        if (str[i] == '-'){
-            sign = -1;
-            i++;
-        }
-        while (i < str.size() && str[i] != '.')
-            digits.push_back(str[i++] - '0');
-        i++;
-        
-        while (i < str.size())
-            accuracy.push_back(str[i++] - '0');
-    }
-
-    bignumber (std::vector <int> dig,  std::vector <int> accur, int sig) {
-        digits = dig;
-        accuracy = accur;
-        sign = sig;
-    }
-
-    bignumber operator + (const bignumber& other) const {
-        std::vector <int> now_dig;
-        std::vector <int> now_acur;
-        
-        int extra_digit = 0;
-        for (int i = 0; i < max(accuracy.size(), other.accuracy.size()); i++) {
-            int now = extra_digit;
-            extra_digit = 0;
-            if (accuracy.size() >= i)
-                now += accuracy[accuracy.size() - i - 1];
-
-            if (other.accuracy.size() >= i)
-                now += other.accuracy[other.accuracy.size() - i - 1];
-
-            
-            if (now > 1) {
-                extra_digit = 1;
-                now -= 2;
-            }
-            now_acur.push_back(now);
-        }
-        
-        for (int i = 0; i < max(digits.size(), other.digits.size()); i++) {
-            int now = extra_digit;
-            extra_digit = 0;
-            if (digits.size() >= i)
-                now += digits[digits.size() - i - 1];
-
-            if (other.digits.size() >= i)
-                now += other.digits[other.digits.size() - i - 1];
-
-            
-            if (now > 1) {
-                extra_digit = 1;
-                now -= 2;
-            }
-            now_dig.push_back(now);
-        }
-        if (extra_digit)
-            now_dig.push_back(1);
-        
-        reverse(now_dig.begin(), now_dig.end());
-        reverse(now_acur.begin(), now_acur.end());
-        return bignumber(now_dig, now_acur, sign);
-    }
-
-    bignumber operator * (const bignumber& other) const {
-        std::vector <int> number_1;
-        std::vector <int> number_2;
-
-        for (int i = 0; i < digits.size(); i++)
-            number_1.push_back(digits[i]);
-        for (int i = 0; i < accuracy.size(); i++)
-            number_1.push_back(accuracy[i]);
-
-        for (int i = 0; i < other.digits.size(); i++)
-            number_2.push_back(other.digits[i]);
-
-        for (int i = 0; i < other.accuracy.size(); i++)
-            number_2.push_back(other.accuracy[i]);
-        
-            
-
-        std::vector <int> ans(number_1.size() + number_2.size());
-
-        // for (int i = number_1.size() - 1; i > - 1 ; i--) {
-        //     for (int j = number_2.size() - 1; j > - 1; j--) {
-        //         if (number_1[i] && number_2[j]) {
-        //             ans[i + j]++;
-        //         }
-        //     }
-        // }
-
-        for (int i = 0; i < number_1.size(); i++) {
-            for (int j = 0; j < number_2.size(); j++) {
-                if (number_1[i] && number_2[j]) {
-                    ans[number_1.size() + number_2.size() - i - j - 2]++;
-                }
-            }
-        }
-
-        for (int i = 0; i < ans.size() - 1; i++){
-            ans[i + 1] += ans[i] / 2;
-            ans[i] %= 2;
-        }
-
-        // for (int i = 0; i < number_1.size(); i++)
-        //     std::cout << number_1[i];
-        // std::cout << "\n";
-
-        // for (int i = 0; i < number_2.size(); i++)
-        //     std::cout << number_2[i];
-        // std::cout << "\n";
-
-        for (int i = 0; i < ans.size(); i++)
-            std::cout << ans[i];
-        std::cout << "\n";
-
-        int extra = 0;
-        reverse(ans.begin(), ans.end());
-        while(ans.size() && ans.back() == 0){
-            ans.pop_back();
-        }
-
-        
-        
-        while(ans.size() && ans.back() == 0){
-            ans.pop_back();
-            
-        }
-        
-        std::cout << extra << "\n";
-        int size_acur = accuracy.size() + other.accuracy.size();
-        std::vector <int> acur;
-        std::vector <int> dig;
-        for (int i = ans.size() - size_acur; i < ans.size(); i++)
-            acur.push_back(ans[i]);
-        
-        for (int i = 0; i < ans.size() - size_acur; i++)
-            dig.push_back(ans[i]);
-        return bignumber(dig, acur, sign * other.sign);
-
-    }
-
-    bignumber operator - (const bignumber &other) const {
-        if (sign != other.sign) {
-            return *this + other;
-        }
-
-        std::vector <int> number_1;
-        std::vector <int> number_2;
-
-        for (int i = 0; i < digits.size(); i++)
-            number_1.push_back(digits[i]);
-        for (int i = 0; i < accuracy.size(); i++)
-            number_1.push_back(accuracy[i]);
-
-        for (int i = 0; i < other.digits.size(); i++)
-            number_2.push_back(other.digits[i]);
-        for (int i = 0; i < accuracy.size(); i++)
-            number_2.push_back(other.accuracy[i]);
-        
-
-    }
-    bignumber& bignumber::operator += (const bignumber &other) {
-        return *this = *this + other;
-    }
-    bignumber& bignumber::operator *= (const bignumber &other) {
-        return *this = *this * other;
-    }
-    bool is_zero (const bignumber) const{
-        return digits.size() == 1 && accuracy.size() == 0 && digits[0] == 0;
-    }
-    bool operator == (const bignumber &other) const {
-        if (is_zero(*this) && is_zero(other))
-            return 1;
-        if (digits.size() != other.digits.size() || accuracy.size() != other.accuracy.size() || sign != other.sign)
-            return 0;
-        for (int i = 0; i < digits.size(); i++) 
-            if (digits[i] != other.digits[i])
-                return 0;
-        
-        for (int i = 0; i < accuracy.size(); i++) 
-            if (accuracy[i] != other.accuracy[i])
-                return 0;
-        
-        return 1;
-    }
-    bool operator != (const bignumber &other) const {
-        return !(*this == other);
-    }
-    bool operator < (const bignumber &other) const {
-        if (sign != other.sign) {
-
-
-            
-        }
-
-        if (digits.size() < other.digits.size())
-            return 0;
-        else if (digits.size() < other.digits.size())
-            return 1;
-        
-    }
-
-};
-
-
-
-std::ostream& operator << (std::ostream& out, const bignumber& t){
-	for (int i = 0; i < t.digits.size(); i++) 
-        out << t.digits[i];
-
-    out << '.';
+std::ostream& operator << (std::ostream& out, const LongNumber& t){
+    if (t.isNegative)
+        out << '-';
     
-    for (int i = 0; i < t.accuracy.size(); i++) 
-        out << t.accuracy[i];
+	for (int i = 0; i < t.digits.size(); i++) {
+        out << t.digits[i];
+        if (t.digits.size() - t.precision - 1 == i && i != t.digits.size() - 1) 
+            out << '.';
+    }
+    
     
 	return out;
 }
 
-
-int main(){
-    std::string s1 = "101"; //5,328125
-    std::string s2 = "1111.000001"; // 15,125
-    bignumber a1(s1);
-    bignumber a2(s2);
-    std::cout << a1 * a2;
+LongNumber::LongNumber(long double number) {
+    precision = 0;
+    isNegative = 0;
+    if (number < 0) {
+        isNegative = 1;
+        number = - number;
+    }
+   
+    u_int64_t now_digit = (1ull << 63);
+    while(now_digit) {
+        if (number >= now_digit) {
+            number -= now_digit;
+            digits.push_back(1);
+        }
+        else {
+            if (digits.size())
+                digits.push_back(0);
+        }
+        now_digit /= 2;
+    }
+    if (digits.size() == 0)
+        digits.push_back(0);
+    long double accuracy = 0.5, eps = 1e-10;
+    while (accuracy > eps && number > eps) {
+        precision++;
+        if (number >= accuracy) {
+            number -= accuracy;
+            digits.push_back(1);
+        }
+        else {
+            digits.push_back(0);
+        }
+        accuracy /= 2;
+    }
 }
 
-// if (now.size() - i < max(accuracy, other.accuracy)) {
-//                 int digit = number[number.size() - i - 1];
-//                 digit +=
-//             }
+LongNumber::LongNumber(const LongNumber& other) 
+    : digits(other.digits), precision(other.precision), isNegative(other.isNegative) {}
 
-// int diff = accuracy - other.accuracy;
-//         int min_accur = min(accuracy, other.accuracy);
+LongNumber::~LongNumber() {}
 
-//         if (diff > 0)
-//             for (int i = 0; i < accuracy; i++)
-//                 now.push_back(number[number.size() - i - 1]);
-//         else if (diff < 0)
-//             for (int i = 0; i < other.accuracy; i++)
-//                 now.push_back(other.number[other.number.size() - i - 1]);
+LongNumber LongNumber::operator-() const {
+    LongNumber inverse(*this);
+    inverse.isNegative = !isNegative;
+    return inverse;
+}
 
+LongNumber& LongNumber::operator=(const LongNumber& other) {
+    if (this != &other) {
+        digits = other.digits;
+        precision = other.precision;
+        isNegative = other.isNegative;
+    }
+    return *this;
+}
 
-//         int extra_digit = 0;
-//         for (int i = 0; i < max(digits, other.digits) + min_accur; i++) {
-//             if (number[digits + min_accur - i - 1] == '.') {
-//                 now.push_back('.');
-//                 continue;
-//             }
+LongNumber LongNumber::operator+(const LongNumber& other) const {
+    if (isNegative != isNegative) {
+            if (other.isNegative) return *this - (-other);
+            return other - (- *this);
+        }
 
-//             int now_digit = extra_digit;
-//             if (digits + min_accur - i  > 0) 
-//                 now_digit += number[digits + min_accur - i - 1] - '0';
+    LongNumber result;
+    int max_precision = max(precision, other.precision);
+    int max_digit = max(digits.size() - precision, other.digits.size() - other.precision);
+    int diff = precision - other.precision;
 
-//             if (other.digits + min_accur - i  > 0)
-//                 now_digit += other.number[other.digits + min_accur - i - 1] - '0';
+    result.digits.resize(max_precision + max_digit + 1);
+    result.precision = max_precision;
+    int extra_digit = 0;
+        for (int i = 0; i < max_precision; i++) {
+            int now = extra_digit;
+            extra_digit = 0;
+            if (precision >= i)
+                if (diff >= 0)
+                    now += digits[digits.size() - i - 1];
+                else
+                    now += digits[digits.size() - i - 1 - diff];
+
+            if (other.precision >= i)
+                if (diff <= 0)
+                    now += other.digits[other.digits.size() - i - 1];
+                else
+                    now += other.digits[other.digits.size() - i - 1 + diff];
             
-//             if (now_digit > 1) {
-//                 now_digit -= 2;
-//                 extra_digit = 1;
-//             }
-//             else {
-//                 extra_digit = 0;
-//             }
-//             now.push_back(now_digit + '0');
-//         }
-//         if (extra_digit) {
-//             now.push_back('1');
-//         }
-//         reverse(now.begin(), now.end());
-//         return bignumber(now);
+            if (now > 1) {
+                extra_digit = 1;
+                now -= 2;
+            }
+            result.digits[result.digits.size() - 1 - i] = now;
+        }
+
+        for (int i = 0; i < max_digit; i++) {
+            int now = extra_digit;
+            extra_digit = 0;
+            if (digits.size() - precision >= i + 1)
+                now += digits[digits.size() - precision - i - 1];
+
+            if (other.digits.size() - other.precision >= i + 1)
+                now += other.digits[other.digits.size() - other.precision - i - 1];
+
+            if (now > 1) {
+                extra_digit = 1;
+                now -= 2;
+            }
+            result.digits[result.digits.size() - result.precision - i - 1] = now;
+        }
+        if (extra_digit)
+            result.digits[0] = 1;
+
+        result.deleteZeros();
+        return result;
+}
+
+LongNumber LongNumber::operator-(const LongNumber& other) const { 
+    if (other.isNegative) return *this + (-other);
+        else if (isNegative) return -(- *this + other);
+
+    if (isNegative == 0) {
+        if (*this < other)
+            return -(other - *this);
+    }
+    else {
+        if (*this > other)
+            return -(other - *this);
+    }
+
+    LongNumber result;
+    int max_precision = max(precision, other.precision);
+    int max_digit = max(digits.size() - precision, other.digits.size() - other.precision);
+    int diff = precision - other.precision;
+
+    result.digits.resize(max_precision + max_digit + 1);
+    result.precision = max_precision;
+    int extra_digit = 0;
+        for (int i = 0; i < max_precision; i++) {
+            int now = extra_digit;
+            extra_digit = 0;
+            if (precision >= i)
+                if (diff >= 0)
+                    now += digits[digits.size() - i - 1];
+                else
+                    now += digits[digits.size() - i - 1 - diff];
+
+            if (other.precision >= i)
+                if (diff <= 0)
+                    now -= other.digits[other.digits.size() - i - 1];
+                else
+                    now -= other.digits[other.digits.size() - i - 1 + diff];
+            
+            if (now < 0) {
+                extra_digit = -1;
+                now += 2;
+            }
+            result.digits[result.digits.size() - 1 - i] = now;
+        }
+
+        for (int i = 0; i < max_digit; i++) {
+            int now = extra_digit;
+            extra_digit = 0;
+            if (digits.size() - precision >= i + 1)
+                now += digits[digits.size() - precision - i - 1];
+
+            if (other.digits.size() - other.precision >= i + 1)
+                now -= other.digits[other.digits.size() - other.precision - i - 1];
+
+            //std::cout << now << " ";
+            if (now < 0) {
+                extra_digit = -1;
+                now += 2;
+            }
+            //std::cout << now << "\n";
+            result.digits[result.digits.size() - result.precision - i - 1] = now;
+        }
+        result.isNegative = isNegative;
+        result.deleteZeros();
+        return result;
+}
+
+void LongNumber::deleteZeros() {
+    reverse(digits.begin(), digits.end());
+    while (digits.size() - precision > 1 && digits.back() == 0) {
+        digits.pop_back();
+    }
+    if (digits.empty()) {
+        digits.push_back(0);
+        isNegative = false;
+    }
+    reverse(digits.begin(), digits.end());
+    
+}
+
+LongNumber LongNumber::operator*(const LongNumber& other) const {
+    LongNumber ans;
+   
+    ans.isNegative = (isNegative + other.isNegative) % 2;
+    ans.digits.resize(digits.size() + other.digits.size() + 1);
+    //std::cout << other << "\n";
+    for (int i = 0; i < digits.size(); i++) {
+            for (int j = 0; j < other.digits.size(); j++) {
+                if (digits[i] && other.digits[j]) {
+                    ans.digits[digits.size() + other.digits.size() - i - j - 2]++;
+                }
+            }
+        }
+
+    for (int i = 0; i < ans.digits.size() - 1; i++){
+            ans.digits[i + 1] += ans.digits[i] / 2;
+            ans.digits[i] %= 2;
+    }
+    
+    reverse(ans.digits.begin(), ans.digits.end());
+    ans.precision = precision + other.precision;
+    ans.deleteZeros();
+    return ans;
+}
+
+LongNumber LongNumber::operator/(const LongNumber& other) const {
+    LongNumber result;
+    
+    return result;
+}
+
+bool LongNumber::operator==(const LongNumber& other) const {
+    return digits == other.digits && precision == other.precision && isNegative == other.isNegative;
+}
+
+bool LongNumber::operator!=(const LongNumber& other) const {
+    return !(*this == other);
+}
+
+bool LongNumber::operator<(const LongNumber& other) const {
+    if (isNegative != other.isNegative) 
+            return isNegative == 1;
+
+        if (digits.size() - precision > other.digits.size() - other.precision)
+            return 0;
+        else if (digits.size() - precision < other.digits.size() - other.precision)
+            return 1;
+        
+        for (int i = 0; i < min(digits.size(), other.digits.size()); i++) {
+            if (digits[i] < other.digits[i] && isNegative == 0) 
+                return 1;
+            if (digits[i] < other.digits[i] && isNegative == 1) 
+                return 0;
+            if (digits[i] > other.digits[i] && isNegative == 0) 
+                return 0;
+            if (digits[i] > other.digits[i] && isNegative == 1) 
+                return 1;
+        }
+        
+        if (digits.size() < other.digits.size()) 
+            return isNegative == 0;
+        if (digits.size() > other.digits.size())
+            return isNegative == 1;
+        return 0;
+}
+
+bool LongNumber::operator>(const LongNumber& other) const {
+    if (isNegative != other.isNegative) 
+            return isNegative == 0;
+
+        if (digits.size() - precision > other.digits.size() - other.precision)
+            return 1;
+        else if (digits.size() - precision < other.digits.size() - other.precision)
+            return 0;
+        
+        for (int i = 0; i < min(digits.size(), other.digits.size()); i++) {
+            if (digits[i] < other.digits[i] && isNegative == 0) 
+                return 0;
+            if (digits[i] < other.digits[i] && isNegative == 1) 
+                return 1;
+            if (digits[i] > other.digits[i] && isNegative == 0) 
+                return 1;
+            if (digits[i] > other.digits[i] && isNegative == 1) 
+                return 0;
+        }
+        
+        if (digits.size() < other.digits.size()) 
+            return isNegative == 1;
+        if (digits.size() > other.digits.size())
+            return isNegative == 0;
+        return 0;
+}
+
+void LongNumber::setPrecision(int binaryDigits) {
+    precision = binaryDigits;
+}
 
 
-    // int dig = 0, accur = 0;
-    //         number = str;
-    //         for (int i = 0; i < str.size(); i++) {
-    //             if (str[i] != '.')
-    //                 dig++;
-    //             else
-    //                 break;
-    //         }
-    //         accur = str.size() - dig;
-    //         digits = dig;
-    //         accuracy = accur;
+LongNumber operator"" _longnum(long double number) {
+    return LongNumber(number);
+}
+
+
+std::string LongNumber::toString() const {
+    std::string result;
+    if (isNegative) {
+        result += '-';
+    }
+    for (int digit : digits) {
+        result += std::to_string(digit);
+    }
+    return result;
+}
+
+void LongNumber::addDigit(int digit) {
+    digits.push_back(digit);
+}
+
