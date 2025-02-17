@@ -20,8 +20,6 @@ std::ostream& operator << (std::ostream& out, const LongNumber& t){
         if (t.digits.size() - t.precision - 1 == i && i != t.digits.size() - 1) 
             out << '.';
     }
-    
-    
 	return out;
 }
 
