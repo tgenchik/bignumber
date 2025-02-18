@@ -12,6 +12,7 @@ public:
     ~LongNumber();
 
     LongNumber& operator=(const LongNumber& other);
+    LongNumber& operator-=(const LongNumber& other);
     LongNumber operator+(const LongNumber& other) const;
     LongNumber operator-(const LongNumber& other) const;
     LongNumber operator*(const LongNumber& other) const;
@@ -21,6 +22,8 @@ public:
     bool operator!=(const LongNumber& other) const;
     bool operator<(const LongNumber& other) const;
     bool operator>(const LongNumber& other) const;
+    bool operator>=(const LongNumber& other) const;
+    bool operator<=(const LongNumber& other) const;
 
     LongNumber operator-() const;
 
@@ -30,7 +33,8 @@ public:
 
     std::vector<int> digits;
     int precision;          
-    bool isNegative;         
+    bool isNegative; 
+    int accuracy;        
 
    
     void deleteZeros();
