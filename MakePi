@@ -6,7 +6,7 @@ LongNumber makePI(int acur){
     LongNumber eight(8);
 
     for (int i = 0; i < acur; i++) {
-        pi = pi + multiplier * (a1 / den1 - b1 / den2 + c1 / den3 + d1 / den4);
+        pi = pi + multiplier * ((a1 / den1) - (b1 / den2) - (c1 / den3) - (d1 / den4));
 
         multiplier = multiplier / denominator;
         den1 = den1 + eight;
