@@ -30,7 +30,6 @@ LongNumber::LongNumber(long double number) {
         isNegative = 1;
         number = - number;
     }
-   
     u_int64_t now_digit = (1ull << 63);
     while(now_digit) {
         if (number >= now_digit) {
@@ -45,22 +44,23 @@ LongNumber::LongNumber(long double number) {
     }
     if (digits.size() == 0)
         digits.push_back(0);
-    long double accuracy = 0.5, eps = 1e-10;
-    while (accuracy > eps && number > eps) {
+    long double accuracy_count = 0.5, eps = 1e-10;
+    while (accuracy_count > eps && number > eps) {
         precision++;
-        if (number >= accuracy) {
-            number -= accuracy;
+        if (number >= accuracy_count) {
+            number -= accuracy_count;
             digits.push_back(1);
         }
         else {
             digits.push_back(0);
         }
-        accuracy /= 2;
+        accuracy_count /= 2;
     }
+    accuracy = precision;
 }
 
 LongNumber::LongNumber(const LongNumber& other) 
-    : digits(other.digits), precision(other.precision), isNegative(other.isNegative) {}
+    : digits(other.digits), precision(other.precision), isNegative(other.isNegative), accuracy(other.accuracy) {}
 
 LongNumber::~LongNumber() {}
 
@@ -71,11 +71,12 @@ LongNumber LongNumber::operator-() const {
 }
 
 LongNumber& LongNumber::operator=(const LongNumber& other) {
-    if (this != &other) {
         digits = other.digits;
+
         precision = other.precision;
+        accuracy = other.precision;
         isNegative = other.isNegative;
-    }
+    
     return *this;
 }
 
@@ -197,12 +198,22 @@ LongNumber LongNumber::operator-(const LongNumber& other) const {
             //std::cout << now << "\n";
             result.digits[result.digits.size() - result.precision - i - 1] = now;
         }
+        
+        
         result.isNegative = isNegative;
         result.deleteZeros();
         return result;
 }
 
+LongNumber& LongNumber::operator-=(const LongNumber& other) {
+    *this = *this - other;
+}
+
 void LongNumber::deleteZeros() {
+    while (digits.size() && precision && digits.back() == 0) {
+        digits.pop_back();
+        precision--;
+    }
     reverse(digits.begin(), digits.end());
     while (digits.size() - precision > 1 && digits.back() == 0) {
         digits.pop_back();
@@ -242,7 +253,55 @@ LongNumber LongNumber::operator*(const LongNumber& other) const {
 
 LongNumber LongNumber::operator/(const LongNumber& other) const {
     LongNumber result;
+    LongNumber divisible = *this;
+    LongNumber divider = other;
+    result.isNegative = (isNegative + other.isNegative) % 2;
+    divider.isNegative = 0;
+    divisible.isNegative = 0;
+
+    int diff = (digits.size() - precision) - (other.digits.size() - other.precision); // 0...
+    result.accuracy = max(accuracy, other.accuracy) + 1;
+    LongNumber now(1);
+    for (int i = 0; i < diff; i++) {
+        now.digits.push_back(0);
+    }
     
+    for (int i = 0; i <= diff; i++) {
+        if (divisible >= now * divider) {
+            divisible = divisible - (now * divider);
+            result.digits.push_back(1);
+            
+        }
+        else 
+            result.digits.push_back(0);
+        
+        if (i != diff) {
+            now.digits[0] = 0;
+            now.digits[1] = 1;
+            now.deleteZeros();
+        }
+        
+    }
+   
+    if (result.digits.size() == 0)
+        result.digits.push_back(0);
+    now = 0.5_longnum;
+    while(result.precision < result.accuracy) {
+        
+        if (divisible >= now * divider) {
+           divisible = (divisible - (now * divider));
+            result.digits.push_back(1);
+        }
+        else 
+            result.digits.push_back(0);
+        
+        result.precision++;
+        now.digits.back() = 0;
+        now.digits.push_back(1);
+        now.precision++;
+        
+    }
+    result.deleteZeros();
     return result;
 }
 
@@ -307,9 +366,18 @@ bool LongNumber::operator>(const LongNumber& other) const {
             return isNegative == 0;
         return 0;
 }
-
+bool LongNumber::operator>=(const LongNumber& other) const {
+    return *this > other || *this == other;
+}
+bool LongNumber::operator<=(const LongNumber& other) const {
+    return *this < other || *this == other;
+}
 void LongNumber::setPrecision(int binaryDigits) {
-    precision = binaryDigits;
+    accuracy = binaryDigits;
+    while(precision > accuracy) {
+        precision--;
+        digits.pop_back();
+    }
 }
 
 
@@ -332,4 +400,5 @@ std::string LongNumber::toString() const {
 void LongNumber::addDigit(int digit) {
     digits.push_back(digit);
 }
+
 
