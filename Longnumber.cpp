@@ -45,7 +45,7 @@ LongNumber::LongNumber(long double number) {
     }
     if (digits.size() == 0)
         digits.push_back(0);
-    long double accuracy_count = 0.5, eps = 1e-10;
+    long double accuracy_count = 0.5, eps = 1e-30;
     while (accuracy_count > eps && number > eps) {
         precision++;
         if (number >= accuracy_count) {
@@ -94,7 +94,6 @@ LongNumber LongNumber::operator+(const LongNumber& other) const {
     result.digits.resize(max_precision + max_digit + 1);
     result.precision = max_precision;
     int extra_digit = 0;
-    std::cout << diff <<"\n";
     int last_1 = digits.size() - 1;
     int last_2 = other.digits.size() - 1;
     for (int i = 0; i < max_precision; i++) {
@@ -221,10 +220,8 @@ void LongNumber::deleteZeros() {
 
 LongNumber LongNumber::operator*(const LongNumber& other) const {
     LongNumber ans;
-   
     ans.isNegative = (isNegative + other.isNegative) % 2;
     ans.digits.resize(digits.size() + other.digits.size() + 1);
-    //std::cout << other << "\n";
     for (int i = 0; i < digits.size(); i++) {
             for (int j = 0; j < other.digits.size(); j++) {
                 if (digits[i] && other.digits[j]) {
@@ -253,7 +250,7 @@ LongNumber LongNumber::operator/(const LongNumber& other) const {
     divisible.isNegative = 0;
 
     int diff = (digits.size() - precision) - (other.digits.size() - other.precision); // 0...
-    result.accuracy = max(accuracy, other.accuracy) + 1;
+    result.accuracy = 90 + 1;
     LongNumber now(1);
     for (int i = 0; i < diff; i++) {
         now.digits.push_back(0);
@@ -280,7 +277,6 @@ LongNumber LongNumber::operator/(const LongNumber& other) const {
         result.digits.push_back(0);
     now = 0.5_longnum;
     while(result.precision < result.accuracy) {
-        
         if (divisible >= now * divider) {
            divisible = (divisible - (now * divider));
             result.digits.push_back(1);
@@ -400,6 +396,12 @@ std::string LongNumber::toString() const {
         result += std::to_string(res_int + res_float);
     else 
         result += std::to_string(res_int);
+
+    while(result.size() > 1 && result.back() == '0') {
+        result.pop_back();
+    }
+    if (result.back() == '.')
+        result.pop_back();
     return result;
 }
 
@@ -411,7 +413,7 @@ LongNumber makePI(int acur){
     LongNumber eight(8);
 
     for (int i = 0; i < acur; i++) {
-        pi = pi + multiplier * (a1 / den1 - b1 / den2 + c1 / den3 + d1 / den4);
+        pi = pi + multiplier * ((a1 / den1) - (b1 / den2) - (c1 / den3) - (d1 / den4));
 
         multiplier = multiplier / denominator;
         den1 = den1 + eight;
@@ -421,7 +423,3 @@ LongNumber makePI(int acur){
     }
     return pi;
 }
-void LongNumber::addDigit(int digit) {
-    digits.push_back(digit);
-}
-
