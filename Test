@@ -1,0 +1,96 @@
+#include "LongNumber.hpp"
+#include <cassert>
+
+void testAddition() {
+    
+    LongNumber a(123456789); 
+    LongNumber b(987654321);  
+    LongNumber result = a + b;
+    assert(result.toString() == "1111111110");  
+
+    
+    LongNumber c(-123456789); 
+    LongNumber d(987654321);   
+    LongNumber result2 = d + c;
+    assert(result2.toString() == "864197532");  
+
+    
+    LongNumber e = 123.456_longnum;  
+    LongNumber f = 789.123_longnum;  
+    LongNumber result3 = e + f;
+    assert(result3.toString() == "912.579");  
+}
+
+void testSubtraction() {
+   
+    LongNumber a(987654321); 
+    LongNumber b = 123456789.0_longnum;  
+    LongNumber result = a - b;
+    assert(result.toString() == "864197532");  
+
+    
+    LongNumber c = -987654321.0_longnum;  
+    LongNumber d = 123456789.0_longnum;   
+    LongNumber result2 = c - d;
+    assert(result2.toString() == "-1111111110");  
+
+    
+    LongNumber e = 789.123_longnum;  
+    LongNumber f = 123.456_longnum;  
+    LongNumber result3 = e - f;
+    assert(result3.toString() == "665.667");  
+}
+
+void testMultiplication() {
+    LongNumber e = 123.456_longnum;  
+    LongNumber f = -7.89_longnum;     
+    LongNumber result3 = e * f;
+    assert(result3.toString() == "-974.06784");  
+}
+
+void testDivision() {
+   
+    LongNumber c = -987654321.0_longnum;  
+    LongNumber d = 123456789.0_longnum;  
+    LongNumber result2 = c / d;
+    assert(result2.toString() == "-8.0000000729");  
+
+    
+    LongNumber e = 789.123_longnum;  
+    LongNumber f = 123.456_longnum;  
+    LongNumber result3 = e / f;
+    assert(result3.toString() == "6.3898305085");  
+}
+
+void testComparison() {
+   
+    LongNumber a = 123456789.0_longnum;  
+    LongNumber b = 987654321.0_longnum;  
+    assert(a < b);
+    assert(b > a);
+    assert(a != b);
+
+    
+    LongNumber c = -123456789.0_longnum;  
+    LongNumber d = -987654321.0_longnum;  
+    assert(c > d);
+    assert(d < c);
+    assert(c != d);
+
+   
+    LongNumber e = 123.456_longnum;  
+    LongNumber f = 789.123_longnum;  
+    assert(e < f);
+    assert(f > e);
+    assert(e != f);
+}
+
+int main() {
+    testAddition();
+    testSubtraction();
+    testMultiplication();
+    testComparison();
+    testDivision();
+    std::cout << "All tests passed!" << std::endl;
+    return 0;
+}
