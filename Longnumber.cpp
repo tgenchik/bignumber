@@ -60,6 +60,29 @@ LongNumber::LongNumber(long double number) {
     accuracy = precision;
 }
 
+LongNumber::LongNumber(int number) {
+    precision = 0;
+    isNegative = 0;
+    if (number < 0) {
+        isNegative = 1;
+        number = - number;
+    }
+    u_int64_t now_digit = (1ull << 63);
+    while(now_digit) {
+        if (number >= now_digit) {
+            number -= now_digit;
+            digits.push_back(1);
+        }
+        else {
+            if (digits.size())
+                digits.push_back(0);
+        }
+        now_digit /= 2;
+    }
+    if (digits.size() == 0)
+        digits.push_back(0);
+}
+
 LongNumber::LongNumber(const LongNumber& other) 
     : digits(other.digits), precision(other.precision), isNegative(other.isNegative), accuracy(other.accuracy) {}
 
@@ -82,7 +105,7 @@ LongNumber& LongNumber::operator=(const LongNumber& other) {
 }
 
 LongNumber LongNumber::operator+(const LongNumber& other) const {
-    if (isNegative != isNegative) {
+    if (isNegative != other.isNegative) {
             if (other.isNegative) return *this - (-other);
             return other - (- *this);
         }
@@ -270,7 +293,6 @@ LongNumber LongNumber::operator/(const LongNumber& other) const {
             now.digits[1] = 1;
             now.deleteZeros();
         }
-        
     }
    
     if (result.digits.size() == 0)
@@ -397,11 +419,13 @@ std::string LongNumber::toString() const {
     else 
         result += std::to_string(res_int);
 
-    while(result.size() > 1 && result.back() == '0') {
-        result.pop_back();
+    if (res_float) {
+        while(result.size() > 1 && result.back() == '0') {
+            result.pop_back();
+        }
+        if (result.back() == '.')
+            result.pop_back();
     }
-    if (result.back() == '.')
-        result.pop_back();
     return result;
 }
 
@@ -423,3 +447,8 @@ LongNumber makePI(int acur){
     }
     return pi;
 }
+void LongNumber::addDigit(int digit) {
+    digits.push_back(digit);
+}
+
+
