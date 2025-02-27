@@ -51,10 +51,10 @@ int main(int argc, char *argv[])
 
     auto end{ std::chrono::high_resolution_clock::now() };
     auto duration { std::chrono::duration_cast<std::chrono::milliseconds>(end - start) };
-
+    
     std::cout << "The first " << decimal_precision << " digits after the decimal point of pi are:\n";
     std::cout << pi.toString(decimal_precision) << "\n\n";
-    std::cout << "Calculation time: " << "malo" << '\n';
+    std::cout << "Calculation time: " << duration << '\n';
 
     return 0;
 }
