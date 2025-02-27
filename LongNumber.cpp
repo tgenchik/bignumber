@@ -604,6 +604,8 @@ std::string LongNumber::toString(int accur = 0) const {
     if (precision != 0) {
         result_int = result_int + "." + result_float;
     }
+    if (result_int.back() == '.')
+        result_int.pop_back();
     return result_int;
 }
 
