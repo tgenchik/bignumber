@@ -7,6 +7,7 @@
 class LongNumber {
 public:
     LongNumber();
+    LongNumber(std::string number);
     LongNumber(long double number);
     LongNumber(const LongNumber& other);
     ~LongNumber();
@@ -29,7 +30,7 @@ public:
 
     void setPrecision(int binaryDigits);
 
-    std::string toString() const;
+    std::string toString(int accur) const;
 
     std::vector<int> digits;
     int precision;          
@@ -39,6 +40,7 @@ public:
    
     void deleteZeros();
     void addDigit(int digit);
+    LongNumber makePi(int acur);
 };
 LongNumber operator ""_longnum(long double);
 #endif 
