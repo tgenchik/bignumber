@@ -1,3 +1,5 @@
+#include "LongNumber.hpp"
+#include <iostream>
 LongNumber makePI(int acur){
     LongNumber pi(0);
     LongNumber multiplier(1), denominator(16);
