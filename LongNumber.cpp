@@ -229,29 +229,6 @@ LongNumber::LongNumber(long double number) {
     accuracy = precision;
 }
 
-LongNumber::LongNumber(int number) {
-    precision = 0;
-    isNegative = 0;
-    if (number < 0) {
-        isNegative = 1;
-        number = - number;
-    }
-    u_int64_t now_digit = (1ull << 63);
-    while(now_digit) {
-        if (number >= now_digit) {
-            number -= now_digit;
-            digits.push_back(1);
-        }
-        else {
-            if (digits.size())
-                digits.push_back(0);
-        }
-        now_digit /= 2;
-    }
-    if (digits.size() == 0)
-        digits.push_back(0);
-}
-
 LongNumber::LongNumber(const LongNumber& other)
     : digits(other.digits), precision(other.precision), isNegative(other.isNegative), accuracy(other.accuracy) {}
 
@@ -601,10 +578,6 @@ void LongNumber::addDigit(int digit) {
     digits.push_back(digit);
 }
 
-
-
-
-
 std::ostream& operator << (std::ostream& out, const decimal& t){
     for (int i = 0; i < t.num.size(); i++)
         out << t.num[i];
@@ -650,3 +623,4 @@ std::string LongNumber::toString(int accur = 0) const {
     }
     return result_int;
 }
+
