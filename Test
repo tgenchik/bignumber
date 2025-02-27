@@ -1,53 +1,86 @@
 #include "LongNumber.hpp"
 #include <cassert>
-
 void testAddition() {
-    
-    LongNumber a(123456789); 
-    LongNumber b(987654321);  
+
+    LongNumber a("788923489238238321781201902190120");  
+    LongNumber b("832616727367126732167321632193102043324176431836729101");
     LongNumber result = a + b;
-    assert(result.toString() == "1111111110");  
+    assert(result.toString() == "832616727367126732168110555682340281645957633738919221");  
 
-    
-    LongNumber c(-123456789); 
-    LongNumber d(987654321);   
+    LongNumber c("-8829415895002903528051847651578957689"); 
+    LongNumber d("987654321");   
     LongNumber result2 = d + c;
-    assert(result2.toString() == "864197532");  
+    assert(result2.toString() == "-8829415895002903528051847650591303368"); 
 
-    
-    LongNumber e = 123.456_longnum;  
-    LongNumber f = 789.123_longnum;  
+    LongNumber e = 183819.682_longnum;  
+    LongNumber f = 2044.1331_longnum;  
     LongNumber result3 = e + f;
-    assert(result3.toString() == "912.579");  
+    assert(result3.toString(4) == "185863.8151");  
+
+    std::cout << "OK\n";
 }
 
 void testSubtraction() {
    
-    LongNumber a(987654321); 
-    LongNumber b = 123456789.0_longnum;  
+    LongNumber a("1509158053829389421"); 
+    LongNumber b = 123456789.2_longnum;  
     LongNumber result = a - b;
-    assert(result.toString() == "864197532");  
+    assert(result.toString(1) == "1509158053705932631.8");  
 
     
-    LongNumber c = -987654321.0_longnum;  
-    LongNumber d = 123456789.0_longnum;   
+    LongNumber c = 8423934.4387_longnum;  
+    LongNumber d("8417408237127081237308124370843218174");   
     LongNumber result2 = c - d;
-    assert(result2.toString() == "-1111111110");  
+    assert(result2.toString(4) == "-8417408237127081237308124370834794239.5613");  
 
     
-    LongNumber e = 789.123_longnum;  
-    LongNumber f = 123.456_longnum;  
+    LongNumber e("761347965084343701378012657238154067741475611047481746570145546541054754756413413717641718141761754614314");  
+    LongNumber f("401738248517423745865015875346824560124356812835382759831953616953");  
     LongNumber result3 = e - f;
-    assert(result3.toString() == "665.667");  
+    assert(result3.toString() == "761347965084343701378012657238154067741073872798964322824280530665707930196289056904806335381929800997361");  
+    std::cout << "OK\n";
+
 }
 
 void testMultiplication() {
-    LongNumber e = 123.456_longnum;  
-    LongNumber f = -7.89_longnum;     
-    LongNumber result3 = e * f;
-    assert(result3.toString() == "-974.06784");  
+    LongNumber a = 17.456_longnum;  
+    LongNumber b = -13.87_longnum;     
+    LongNumber result = a * b;
+    assert(result.toString(5) == "-242.11472");  
+
+    LongNumber c("-803247324834021037842783427178403278428");  
+    LongNumber d("7483874187187812487824178124184034870510");   
+    LongNumber result2 = c * d;
+    assert(result2.toString(4) == "-6011401920252993982941750281656968397523373671338715615524990171086056456358280");
+
+    std::cout << "OK\n";
 }
 
+
+void testComparison() {
+   
+    LongNumber a("83424824378023218342013243412028537");  
+    LongNumber b("83424824378023218342013243412028538");  
+    assert(a < b);
+    assert(b > a);
+    assert(a != b);
+
+    
+    LongNumber c("-9999999972");  
+    LongNumber d("-9999999999");  
+
+    assert(c > d);
+    assert(d < c);
+    assert(c != d);
+
+   
+    LongNumber e = -1;  
+    LongNumber f = 1;  
+    assert(e < f);
+    assert(f > e);
+    assert(e != f);
+    std::cout << "OK\n";
+}
 void testDivision() {
    
     LongNumber c = -987654321.0_longnum;  
@@ -60,29 +93,6 @@ void testDivision() {
     LongNumber f = 123.456_longnum;  
     LongNumber result3 = e / f;
     assert(result3.toString() == "6.3898305085");  
-}
-
-void testComparison() {
-   
-    LongNumber a = 123456789.0_longnum;  
-    LongNumber b = 987654321.0_longnum;  
-    assert(a < b);
-    assert(b > a);
-    assert(a != b);
-
-    
-    LongNumber c = -123456789.0_longnum;  
-    LongNumber d = -987654321.0_longnum;  
-    assert(c > d);
-    assert(d < c);
-    assert(c != d);
-
-   
-    LongNumber e = 123.456_longnum;  
-    LongNumber f = 789.123_longnum;  
-    assert(e < f);
-    assert(f > e);
-    assert(e != f);
 }
 
 int main() {
