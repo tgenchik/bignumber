@@ -83,16 +83,17 @@ void testComparison() {
 }
 void testDivision() {
    
-    LongNumber c = -987654321.0_longnum;  
-    LongNumber d = 123456789.0_longnum;  
-    LongNumber result2 = c / d;
-    assert(result2.toString() == "-8.0000000729");  
+    LongNumber a("333");  
+    LongNumber b("999999999999999999999999999");  
+    LongNumber result = b / a;
+    assert(result.toString() == "3003003003003003003003003");  
 
-    
-    LongNumber e = 789.123_longnum;  
-    LongNumber f = 123.456_longnum;  
-    LongNumber result3 = e / f;
-    assert(result3.toString() == "6.3898305085");  
+    LongNumber c = 16.3132_longnum;  
+    LongNumber d = 18734.39192_longnum;  
+    LongNumber result2 = d / c;
+    assert(result2.toString(12) == "1148.419189368119"); 
+
+    std::cout << "OK\n"; 
 }
 
 int main() {
