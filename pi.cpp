@@ -16,3 +16,6 @@ LongNumber makePI(int acur){
     }
     return pi;
 }
+int main () {
+    return 0;
+}
