@@ -418,7 +418,7 @@ LongNumber LongNumber::operator/(const LongNumber& other) const {
     divisible.isNegative = 0;
 
     int diff = (digits.size() - precision) - (other.digits.size() - other.precision); // 0...
-    result.accuracy = 330;
+    result.accuracy = 400;
     LongNumber now(1);
     for (int i = 0; i < diff; i++) {
         now.digits.push_back(0);
