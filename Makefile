@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -O1 -std=c++20
+CXXFLAGS = -O2 -std=c++20
 LDFLAGS = 
 
 LONGNUMBER_SRC = LongNumber.cpp
